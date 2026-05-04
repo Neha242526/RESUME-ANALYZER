@@ -1,47 +1,40 @@
+from flask import Flask, request, jsonify
 import os
-from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Home route
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return "🚀 Resume Analyzer is Running!"
 
-@app.route('/analyze', methods=['POST'])
-def analyze():
-    data = request.json
-    text = data.get('text', '').lower()
-    
-    # चेक करने के लिए कुछ स्किल्स
-    keywords = ["python", "java", "sql", "html", "css", "javascript", "react", "excel"]
-    found = [word for word in keywords if word in text]
-    
-    score = (len(found) / len(keywords)) * 100 if keywords else 0
-
-    return jsonify({
-        "score": round(score, 2),
-        "skills_found": found
-    })
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=5000)
+# Upload route
 @app.route('/upload', methods=['POST'])
 def upload():
-    file = request.files.get('file')
+    try:
+        # Get file from request
+        file = request.files.get('file')
 
-    if not file:
-        return "No file uploaded"
+        if not file:
+            return jsonify({"error": "No file uploaded"}), 400
 
-    return "File received"
-def upload():
-    file = request.files['file']
-    
-    if file.filename == '':
-        return "No file selected"
+        # Save file (temporary)
+        filepath = os.path.join("uploads", file.filename)
+        os.makedirs("uploads", exist_ok=True)
+        file.save(filepath)
 
-    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(filepath)
+        # Dummy analysis (replace later with AI)
+        result = {
+            "message": "File uploaded successfully",
+            "filename": file.filename,
+            "analysis": "This is a sample analysis. AI integration pending."
+        }
 
-    return "File uploaded successfully ✅"   
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Run app (for local testing only)
+if __name__ == "__main__":
+    app.run(debug=True)
