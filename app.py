@@ -2,7 +2,8 @@ import os
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
-
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -26,4 +27,14 @@ def analyze():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+ @app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['file']
     
+    if file.filename == '':
+        return "No file selected"
+
+    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(filepath)
+
+    return "File uploaded successfully ✅"   
