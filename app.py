@@ -15,7 +15,15 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # Home route
 @app.route('/')
 def home():
-    return "🚀 AI Resume Analyzer Running!"
+    return """
+    <h1>🚀 AI Resume Analyzer</h1>
+    <p>Upload your resume below</p>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Analyze</button>
+    </form>
+    """
 
 # Extract text from PDF
 def extract_text(file_path):
