@@ -1,0 +1,47 @@
+<h2>Upload Resume / Photo</h2>
+
+<!-- Upload File -->
+<form action="/upload" method="POST" enctype="multipart/form-data">
+  <label>Select File:</label><br>
+  <input type="file" name="file"><br><br>
+  <button type="submit">Upload File</button>
+</form>
+
+<br><hr><br>
+
+<!-- Take Picture -->
+<h3>Take Picture</h3>
+<video id="video" width="300" height="200" autoplay></video><br>
+<button onclick="capture()">Capture</button>
+<canvas id="canvas" style="display:none;"></canvas>
+
+<br><hr><br>
+
+<!-- Upload Photo -->
+<form action="/upload" method="POST" enctype="multipart/form-data">
+  <label>Add Photo:</label><br>
+  <input type="file" name="file" accept="image/*"><br><br>
+  <button type="submit">Upload Photo</button>
+</form>
+
+<script>
+  // Access camera
+  const video = document.getElementById('video');
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+    });
+
+  function capture() {
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    context.drawImage(video, 0, 0);
+
+    alert("Photo captured!");
+  }
+</script>
